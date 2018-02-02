@@ -10,7 +10,10 @@ import Halogen.VDom (ElemName(..), ElemSpec(..), Machine, Step(..), VDom(..), VD
 import Halogen.VDom.Machine (never, Machine(..), step, extract)
 import Data.Tuple
 
-newtype Attr = Attr (Array (Tuple String String))
+data MEvent
+
+data AttrValue = AttrValue String | MEvent
+newtype Attr = Attr (Array (Tuple String AttrValue))
 
 foreign import setAttrImpl :: forall eff. Element -> Attr -> Eff eff Unit
 foreign import done :: forall eff. Eff eff Unit
@@ -35,10 +38,7 @@ mySpec document =  VDomSpec {
     }
 
 myDom1 :: forall b. VDom Attr b
-myDom1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" "1"),(Tuple "name" "naman")])) [ (Text "hello")] 
-
-myDom2 :: forall b. VDom Attr b
-myDom2 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" "2")])) [ (Text "hi")]
+myDom1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" (AttrValue "1")),(Tuple "name" (AttrValue "naman"))])) [ (Text "hello")] 
 
 main = do
   document <- getDoc
