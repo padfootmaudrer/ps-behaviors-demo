@@ -37,10 +37,11 @@ mySpec document =  VDomSpec {
 myDom1 :: forall b. VDom Attr b
 myDom1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" "1"),(Tuple "name" "naman")])) [ (Text "hello")] 
 
--- myDom2 :: forall b. VDom Attr b
--- myDom2 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr {id: "2", name: "3"})) [ (Text "hi")]
+myDom2 :: forall b. VDom Attr b
+myDom2 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" "2")])) [ (Text "hi")]
 
 main = do
   document <- getDoc
   machine1 <- buildVDom ( mySpec document ) myDom1
+  log "hello"
   pure unit

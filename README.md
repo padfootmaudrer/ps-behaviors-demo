@@ -1,4 +1,4 @@
-[] Create Js Nodes instead of Dom nodes
+[:heavy_check_mark:] Create Js Nodes instead of Dom nodes
 
 [] Understanding widgets
 

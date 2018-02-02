@@ -1,6 +1,7 @@
 exports.setAttrImpl = function(element) {
   return function(attrList) {
     return function() {
+      console.log(attrList)
       for (var i = 0; i < attrList.length; i++) {
         element.props[attrList[i].value0] = attrList[i].value1;
       }
