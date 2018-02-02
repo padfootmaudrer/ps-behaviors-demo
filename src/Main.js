@@ -1,9 +1,12 @@
 exports.setAttrImpl = function(element) {
-  return function(attr) {
+  return function(attrList) {
     return function() {
+      for (var i = 0; i < attrList.length; i++) {
+        element.props[attrList[i].value0] = attrList[i].value1;
+      }
+
       console.log(element);
-      console.log(attr);
-      return "attr " + attr;
+      return null;
     }
   }
 }
@@ -13,13 +16,12 @@ exports.appendChildToBody = function(node) {
     var body = document.getElementsByTagName("body");
 
     console.log(node);
-    console.log("node");
-    // body[0].appendChild(node);
+
+    body[0].appendChild(node);
   }
 }
 
 exports.getDoc = function() {
-  console.log(document);
   return document;
 }
 
