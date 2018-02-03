@@ -1,6 +1,6 @@
 ### UI/VDOM
 
-[:heavy_check_mark:] Create Js Nodes instead of Dom nodes
+[:ballot_box_with_check:] Create Js Nodes instead of Dom nodes
 
 [] Patching Nodes with function calls
 
@@ -8,7 +8,7 @@
 
 [] Attribute Support
 
-[] Event Listner Support
+[:ballot_box_with_check:] Event Listner Support
 
 [] Converting Array format to Vdoms format 
 
