@@ -2,7 +2,7 @@
 
 :ballot_box_with_check: Create Js Nodes instead of Dom nodes
 
-:ballot_box Patching Nodes with function calls
+:ballot_box: Patching Nodes with function calls
 
 :ballot_box Understanding widgets
 
