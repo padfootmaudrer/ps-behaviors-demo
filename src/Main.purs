@@ -7,7 +7,7 @@ import Prelude
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
 import DOM.Node.Types (Document, Element, Node)
-import Halogen.VDom (ElemName(..), ElemSpec(..), Machine, Step(..), VDom(..), VDomMachine, VDomSpec(..), buildVDom)
+import Halogen.VDom (ElemName(..), ElemSpec(..), Machine, Step(..), VDom(..), VDomMachine, VDomSpec(..), buildVDom, extract)
 import Halogen.VDom.Machine (never, Machine(..), step, extract)
 
 data MEvent
@@ -19,6 +19,7 @@ foreign import done :: forall eff. Eff eff Unit
 foreign import appendChildToBody :: forall eff. Node -> Eff eff Unit
 foreign import getDoc :: forall eff. Eff eff Document
 foreign import  onClick :: MEvent
+foreign import  logMy :: forall a eff. a -> Eff eff Unit
 
 setAttr :: forall eff. Element -> Attr -> Eff eff (Step (Eff eff) Attr Unit)
 setAttr element attr = do
@@ -37,23 +38,26 @@ mySpec document =  VDomSpec {
     , document : document
     }
 
+-- myDom1 :: forall b. VDom Attr b
+-- myDom1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout")
+--                (Attr [
+--                    (Tuple "id" (AttrValue "1")),
+--                    (Tuple "name" (AttrValue "naman")) ,
+--                    (Tuple "click" (Some onClick))
+--                    ]))
+--                [Elem (ElemSpec (Nothing) (ElemName "linearLayout")
+--                (Attr [
+--                    (Tuple "id" (AttrValue "2")),
+--                    (Tuple "name" (AttrValue "kalkhuria")) ,
+--                    (Tuple "click" (Some onClick))
+--                    ])) []]
 
-myDom1 :: forall b. VDom Attr b
-myDom1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout")
-               (Attr [
-                   (Tuple "id" (AttrValue "1")),
-                   (Tuple "name" (AttrValue "naman")) ,
-                   (Tuple "click" (Some onClick))
-                   ]))
-               [Elem (ElemSpec (Nothing) (ElemName "linearLayout")
-               (Attr [
-                   (Tuple "id" (AttrValue "2")),
-                   (Tuple "name" (AttrValue "kalkhuria")) ,
-                   (Tuple "click" (Some onClick))
-                   ])) []]
+childNode = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" (AttrValue "3"))])) []
+myDom1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" (AttrValue "1"))])) [childNode]
+myDom2 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" (AttrValue "1"))])) []
 
 main = do
   document <- getDoc
   machine1 <- buildVDom ( mySpec document ) myDom1
-  log "hello"
+  machine2 <- step machine1 myDom2
   pure unit

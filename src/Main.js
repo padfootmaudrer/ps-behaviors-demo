@@ -25,6 +25,9 @@ exports.setAttrImpl = function(element) {
         element.props[events[i].key] = curried;
       }
 
+
+      console.log("here");
+
       window.El = element;
       return null;
     }
