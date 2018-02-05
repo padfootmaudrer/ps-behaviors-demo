@@ -1,15 +1,16 @@
 window.STAGE = "RENDER";
 
 window.removeChild = removeChild;
+window.addChild = addChild;
 
-function removeChild (child, parent) {
+function removeChild (child, parent, index) {
   console.log("removeChild");
-  console.log(child, parent);
+  console.log(child, parent, index);
 }
 
-function addChild (child, parent) {
-  console.log("removeChild");
-  console.log(child, parent);
+function addChild (child, parent, index) {
+  console.log("addChild");
+  console.log(child, parent, index);
 }
 
 function addAttribute (element, attribute) {

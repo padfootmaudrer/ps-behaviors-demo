@@ -72,14 +72,13 @@ myDom2 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
                                                                    (Tuple "id" (AttrValue "1")),
                                                                    (Tuple "color" (AttrValue "red"))
                                                                    ]) ) [childNode2]
-
 main = do
   document <- getDoc
 
   updateStage "RENDER"
   let dom = (myDom1)
 
-  machine1 <- buildVDom ( mySpec document ) dom
+  machine1 <- buildVDom (mySpec document) dom
 
   updateStage "RENDER"
   let newDom = (myDom2)
