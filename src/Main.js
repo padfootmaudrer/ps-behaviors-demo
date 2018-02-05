@@ -1,5 +1,7 @@
 window.EVENTS = {};
 
+window.__screenSubs = {};
+
 function addAttribute (element, attribute) {
   console.log("addAttribute");
   console.log(element, attribute);
@@ -69,7 +71,8 @@ exports.logMy = function(node) {
 
 exports.onClick = function(props) {
   return function() {
-    window.EVENTS[props.id](props);
+    // window.EVENTS[props.id](props);
+    window.__screens[props.domName](props)
   }
 }
 
@@ -131,5 +134,11 @@ exports.cleanupAttributes = function(element) {
       console.log(element);
       console.log(attrList);
     }
+  }
+}
+
+exports.attachSub = function(screenJSON) {
+  return function(sub) {
+    window.__screenSubs[screenJSON.tag] = sub;
   }
 }

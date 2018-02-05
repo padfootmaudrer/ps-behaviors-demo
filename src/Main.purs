@@ -7,6 +7,12 @@ import Prelude
 import Control.Monad.Eff (Eff, foreachE)
 import Control.Monad.Eff.Console (CONSOLE, log)
 import DOM.Node.Types (Document, Element, Node)
+import Data.Foreign (Foreign)
+import Data.Foreign.Class (class Decode, class Encode, encode)
+import Data.Foreign.Generic (defaultOptions, genericDecode, genericEncode)
+import Data.Generic.Rep (class Generic)
+import Data.Generic.Rep.Show (genericShow)
+import FRP.Event (Event)
 import Halogen.VDom (ElemName(..), ElemSpec(..), Machine, Step(..), VDom(..), VDomMachine, VDomSpec(..), buildVDom, extract)
 import Halogen.VDom.Machine (never, Machine(..), step, extract)
 
@@ -23,6 +29,21 @@ foreign import logMy :: forall a eff. a -> Eff eff Unit
 foreign import applyAttributes ∷ forall eff. Element → Attr → Eff eff Unit
 foreign import patchAttributes ∷ forall eff. Element → Attr → Attr → Eff eff Unit
 foreign import cleanupAttributes ∷ forall eff. Element → Attr → Eff eff Unit
+
+foreign import attachSub :: Foreign -> Event Counter
+
+newtype Counter = Counter {val :: Int}
+
+data Screen = FirstScreen Int | SecondScreen Int
+
+derive instance genericFirstScreen :: Generic Screen _
+instance encodeFirstScreen :: Encode Screen where
+  encode = genericEncode (defaultOptions {unwrapSingleConstructors = false})
+instance decodeFirstScreen :: Decode Screen where
+  decode = genericDecode (defaultOptions {unwrapSingleConstructors = false})
+
+instance showScreen :: Show Screen where
+  show = genericShow
 
 buildAttributes
   ∷ ∀ eff a
@@ -81,20 +102,27 @@ childNode1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "i
 gChildNode2 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" (AttrValue "3"))])) []
 childNode2 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [])) [gChildNode1]
 
-myDom1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
+myDom1 :: forall a. Screen -> VDom Attr a
+myDom1 sc = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
                                                                   (Tuple "id" (AttrValue "1")),
                                                                   (Tuple "color" (AttrValue "red")),
-                                                                  (Tuple "text" (AttrValue "hello"))
+                                                                  (Tuple "text" (AttrValue "hello")),
+                                                                   (Tuple "domName" (AttrValue (show sc)))
                                                                   ]) ) [childNode1]
 
-myDom2 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
+myDom2 :: forall a. Screen -> VDom Attr a
+myDom2 sc = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
                                                                    (Tuple "id" (AttrValue "1")),
                                                                    (Tuple "color" (AttrValue "blue")),
-                                                                   (Tuple "bg" (AttrValue "green"))
+                                                                   (Tuple "bg" (AttrValue "green")),
+                                                                   (Tuple "domName" (AttrValue (show sc)))
                                                                    ]) ) [childNode2]
+
 
 main = do
   document <- getDoc
-  machine1 <- buildVDom ( mySpec document ) myDom1
-  machine2 <- step machine1 myDom2
+  let ev1 = attachSub (encode $ FirstScreen 0)
+  machine1 <- buildVDom ( mySpec document ) (myDom1 (FirstScreen 0))
+  let ev2 = attachSub (encode $ SecondScreen 0)
+  machine2 <- step machine1 (myDom2 (SecondScreen 0))
   pure unit
