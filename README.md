@@ -10,7 +10,9 @@
 
 :ballot_box_with_check: `Patching Vdom` -> Remove Nodes
 
-:white_circle: `Patching Vdom` -> Add Nodes
+:ballot_box_with_check: `Patching Vdom` -> Add Nodes
+
+:white_circle: Testing Render and Patch functions
 
 :white_circle: Converting Array format to Vdoms format 
 
