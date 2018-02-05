@@ -7,22 +7,44 @@ import Prelude
 import Control.Monad.Eff (Eff, foreachE)
 import Control.Monad.Eff.Console (CONSOLE, log)
 import DOM.Node.Types (Document, Element, Node)
+import Data.Foreign (Foreign)
+import Data.Foreign.Class (class Decode, class Encode, encode)
+import Data.Foreign.Generic (defaultOptions, genericDecode, genericEncode)
+import Data.Generic.Rep (class Generic)
+import Data.Generic.Rep.Show (genericShow)
+import FRP.Event (Event, subscribe)
 import Halogen.VDom (ElemName(..), ElemSpec(..), Machine, Step(..), VDom(..), VDomMachine, VDomSpec(..), buildVDom, extract)
 import Halogen.VDom.Machine (never, Machine(..), step, extract)
 
 data MEvent
-data AttrValue = AttrValue String | Some MEvent
+
+{-- data AttrTypes = String | Foreign --}
+data AttrValue = AttrValue String | ScreenTag Foreign | Some MEvent
+
 newtype Attr = Attr (Array (Tuple String AttrValue))
 
 foreign import done :: forall eff. Eff eff Unit
 foreign import getDoc :: forall eff. Eff eff Document
-foreign import  onClick :: MEvent
+foreign import onClick :: MEvent
 foreign import logMy :: forall a eff. a -> Eff eff Unit
 foreign import updateStage :: forall eff. String -> Eff eff Unit
 
 foreign import applyAttributes ∷ forall eff. Element → Attr → Eff eff Unit
 foreign import patchAttributes ∷ forall eff. Element → Attr → Attr → Eff eff Unit
 foreign import cleanupAttributes ∷ forall eff. Element → Attr → Eff eff Unit
+
+foreign import attachSub :: forall a. Foreign -> Event { id :: String | a}
+
+data Screen = FirstScreen Int | SecondScreen Int
+
+derive instance genericFirstScreen :: Generic Screen _
+instance encodeFirstScreen :: Encode Screen where
+  encode = genericEncode (defaultOptions {unwrapSingleConstructors = false})
+instance decodeFirstScreen :: Decode Screen where
+  decode = genericDecode (defaultOptions {unwrapSingleConstructors = false})
+
+instance showScreen :: Show Screen where
+  show = genericShow
 
 buildAttributes
   ∷ ∀ eff a
@@ -61,27 +83,36 @@ gChildNode2 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "
 childNode1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" (AttrValue "2"))])) []
 childNode2 = Elem (ElemSpec (Nothing) (ElemName "relativeLayout") (Attr [(Tuple "id" (AttrValue "2"))])) []
 
-myDom1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
-                                                                  (Tuple "click" (Some onClick)),
+myDom1 :: forall a. Screen -> VDom Attr a
+myDom1 sc = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
                                                                   (Tuple "id" (AttrValue "1")),
-                                                                  (Tuple "color" (AttrValue "red"))
+                                                                  (Tuple "color" (AttrValue "red")),
+                                                                  (Tuple "text" (AttrValue "hello")),
+                                                                  (Tuple "domName" (ScreenTag (encode sc))),
+                                                                  (Tuple "click" (Some onClick))
                                                                   ]) ) [childNode1]
 
-myDom2 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
-                                                                   (Tuple "click" (Some onClick)),
+myDom2 :: forall a. Screen -> VDom Attr a
+myDom2 sc = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
                                                                    (Tuple "id" (AttrValue "1")),
-                                                                   (Tuple "color" (AttrValue "red"))
-                                                                   ]) ) [childNode2]
+                                                                   (Tuple "color" (AttrValue "blue")),
+                                                                   (Tuple "bg" (AttrValue "green")),
+                                                                   (Tuple "domName" (ScreenTag (encode sc)))
+                                                                   ]) ) []
+
 main = do
   document <- getDoc
+  let ev1 = attachSub (encode $ FirstScreen 0)
+  _ <- (subscribe ev1 (\c -> log $ show $ c.id))
 
   updateStage "RENDER"
-  let dom = (myDom1)
+  let dom = (myDom1 (FirstScreen 0))
 
   machine1 <- buildVDom (mySpec document) dom
 
   updateStage "RENDER"
-  let newDom = (myDom2)
+  logMy (extract machine1)
+  let newDom = (myDom2 (SecondScreen 0))
 
   updateStage "PATCH"
 

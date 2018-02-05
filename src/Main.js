@@ -13,6 +13,8 @@ function addChild (child, parent, index) {
   console.log(child, parent, index);
 }
 
+window.__screenSubs = {};
+
 function addAttribute (element, attribute) {
   console.log("addAttribute");
   console.log(element, attribute);
@@ -34,23 +36,35 @@ function attachAttributeList(element, attrList) {
   var events = [];
   var fn = function(props) {console.log(props)};
 
+  var domNameIndex = -1;
   for (var i = 0; i < attrList.length; i++) {
     key = attrList[i].value0;
     value = attrList[i].value1.value0;
 
+    if (key === "domName") {
+      domNameIndex = i;
+    }
+
     if (typeof value == "function") {
+      var screenName = attrList[domNameIndex].value1.value0.tag;
+      attachListener(element, screenName, key);
       events.push({key: key, value: value});
     } else {
       element.props[key] = value;
     }
   }
-
   for (var i=0; i<events.length; i++) {
     curried = events[i].value(element.props);
     element.props[events[i].key] = curried;
   }
 
   return null;
+}
+
+function attachListener(element, screenName, eventType) {
+  element[eventType] = function(){
+    window.__screenSubs[screenName](element.props);
+  }
 }
 
 exports.getDoc = function() {
@@ -66,12 +80,11 @@ exports.logMy = function(node) {
   return function() {
     console.log("node");
     console.log(node);
+    window.__n = node;
   }
 }
 
-exports.onClick = function(props) {
-  return function() {
-  }
+exports.onClick = function() {
 }
 
 exports.applyAttributes = function(element) {
@@ -121,7 +134,7 @@ exports.patchAttributes = function(element) {
           }
         }
       }
-    }
+      
   }
 }
 
@@ -132,6 +145,13 @@ exports.cleanupAttributes = function(element) {
       console.log(element);
       console.log(attrList);
     }
+  }
+}
+
+exports.attachSub = function(screenJSON) {
+  return function(sub) {
+    window.__screenSubs[screenJSON.tag] = sub;
+    console.log("attaching");
   }
 }
 
