@@ -1,4 +1,16 @@
-window.EVENTS = {};
+window.STAGE = "RENDER";
+
+window.removeChild = removeChild;
+
+function removeChild (child, parent) {
+  console.log("removeChild");
+  console.log(child, parent);
+}
+
+function addChild (child, parent) {
+  console.log("removeChild");
+  console.log(child, parent);
+}
 
 window.__screenSubs = {};
 
@@ -23,33 +35,34 @@ function attachAttributeList(element, attrList) {
   var events = [];
   var fn = function(props) {console.log(props)};
 
+  var domNameIndex = -1;
   for (var i = 0; i < attrList.length; i++) {
     key = attrList[i].value0;
     value = attrList[i].value1.value0;
 
+    if (key === "domName") {
+      domNameIndex = i;
+    }
+
     if (typeof value == "function") {
+      var screenName = attrList[domNameIndex].value1.value0.tag;
+      attachListener(element, screenName, key);
       events.push({key: key, value: value});
     } else {
       element.props[key] = value;
     }
   }
-
   for (var i=0; i<events.length; i++) {
     curried = events[i].value(element.props);
-    EVENTS[element.props.id] = fn;
     element.props[events[i].key] = curried;
   }
 
-
-  window.El = element;
   return null;
 }
 
-exports.appendChildToBody = function(node) {
-  return function() {
-    var body = document.getElementsByTagName("body");
-
-    body[0].appendChild(node);
+function attachListener(element, screenName, eventType) {
+  element[eventType] = function(){
+    window.__screenSubs[screenName](element.props);
   }
 }
 
@@ -66,14 +79,11 @@ exports.logMy = function(node) {
   return function() {
     console.log("node");
     console.log(node);
+    window.__n = node;
   }
 }
 
-exports.onClick = function(props) {
-  return function() {
-    // window.EVENTS[props.id](props);
-    window.__screens[props.domName](props)
-  }
+exports.onClick = function() {
 }
 
 exports.applyAttributes = function(element) {
@@ -140,5 +150,12 @@ exports.cleanupAttributes = function(element) {
 exports.attachSub = function(screenJSON) {
   return function(sub) {
     window.__screenSubs[screenJSON.tag] = sub;
+    console.log("attaching");
+  }
+}
+
+exports.updateStage = function(stage) {
+  return function() {
+    window.STAGE = stage;
   }
 }

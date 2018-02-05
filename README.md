@@ -6,13 +6,17 @@
 
 :ballot_box_with_check: Event Listner Support
 
-:white_circle: Understanding widgets
-
 :ballot_box_with_check: `Patching Vdom` -> Add, Remove, Update Attributes
 
-:white_circle: `Patching Vdom` -> Add, Remove Nodes
+:ballot_box_with_check: `Patching Vdom` -> Remove Nodes
+
+:white_circle: `Patching Vdom` -> Add Nodes
 
 :white_circle: Converting Array format to Vdoms format 
+
+:white_circle: Rendering `json` to `android ui` and modifying elements
+
+:white_circle: Custom Widgets
 
 ### Controller/Behaviors
 
