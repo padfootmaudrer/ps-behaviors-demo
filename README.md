@@ -23,3 +23,9 @@
 ### Controller/Behaviors
 
 :white_circle: First cut for wiring events from jsx to purscript and finally dispatching it to flow.
+
+### Keyed elements
+
+### Event Delegation (remove eventHandlers on child removal)
+
+### Performance check/improvements

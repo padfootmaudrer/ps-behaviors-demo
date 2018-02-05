@@ -134,7 +134,7 @@ exports.patchAttributes = function(element) {
           }
         }
       }
-      
+    }
   }
 }
 
