@@ -15,10 +15,10 @@ data AttrValue = AttrValue String | Some MEvent
 newtype Attr = Attr (Array (Tuple String AttrValue))
 
 foreign import done :: forall eff. Eff eff Unit
-foreign import appendChildToBody :: forall eff. Node -> Eff eff Unit
 foreign import getDoc :: forall eff. Eff eff Document
 foreign import  onClick :: MEvent
 foreign import logMy :: forall a eff. a -> Eff eff Unit
+foreign import updateStage :: forall eff. String -> Eff eff Unit
 
 foreign import applyAttributes ∷ forall eff. Element → Attr → Eff eff Unit
 foreign import patchAttributes ∷ forall eff. Element → Attr → Attr → Eff eff Unit
@@ -49,52 +49,44 @@ buildAttributes elem = apply
   done ∷ forall eff. Attr → Eff eff Unit
   done attrs = cleanupAttributes elem attrs
 
--- buildAttributes
---   ∷ ∀ eff
---   . Element
---   → VDomMachine eff Attr Unit
--- buildAttributes element = setAttr element
-
 mySpec document =  VDomSpec {
       buildWidget: const never
     , buildAttributes: buildAttributes
     , document : document
     }
 
--- myDom1 :: forall b. VDom Attr b
--- myDom1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout")
---                (Attr [
---                    (Tuple "id" (AttrValue "1")),
---                    (Tuple "name" (AttrValue "naman")) ,
---                    (Tuple "click" (Some onClick))
---                    ]))
---                [Elem (ElemSpec (Nothing) (ElemName "linearLayout")
---                (Attr [
---                    (Tuple "id" (AttrValue "2")),
---                    (Tuple "name" (AttrValue "kalkhuria")) ,
---                    (Tuple "click" (Some onClick))
---                    ])) []]
-
 gChildNode1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" (AttrValue "3"))])) []
-childNode1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" (AttrValue "2"))])) [gChildNode1]
+gChildNode2 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" (AttrValue "5"))])) []
 
-gChildNode2 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" (AttrValue "3"))])) []
-childNode2 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [])) [gChildNode1]
+childNode1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" (AttrValue "2"))])) []
+childNode2 = Elem (ElemSpec (Nothing) (ElemName "relativeLayout") (Attr [(Tuple "id" (AttrValue "2"))])) []
 
 myDom1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
+                                                                  (Tuple "click" (Some onClick)),
                                                                   (Tuple "id" (AttrValue "1")),
-                                                                  (Tuple "color" (AttrValue "red")),
-                                                                  (Tuple "text" (AttrValue "hello"))
+                                                                  (Tuple "color" (AttrValue "red"))
                                                                   ]) ) [childNode1]
 
 myDom2 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
+                                                                   (Tuple "click" (Some onClick)),
                                                                    (Tuple "id" (AttrValue "1")),
-                                                                   (Tuple "color" (AttrValue "blue")),
-                                                                   (Tuple "bg" (AttrValue "green"))
+                                                                   (Tuple "color" (AttrValue "red"))
                                                                    ]) ) [childNode2]
 
 main = do
   document <- getDoc
-  machine1 <- buildVDom ( mySpec document ) myDom1
-  machine2 <- step machine1 myDom2
+
+  updateStage "RENDER"
+  let dom = (myDom1)
+
+  machine1 <- buildVDom ( mySpec document ) dom
+
+  updateStage "RENDER"
+  let newDom = (myDom2)
+
+  updateStage "PATCH"
+
+  machine2 <- step machine1 newDom
+
+  logMy (extract machine2)
   pure unit

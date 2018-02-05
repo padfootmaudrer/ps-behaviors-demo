@@ -1,4 +1,16 @@
-window.EVENTS = {};
+window.STAGE = "RENDER";
+
+window.removeChild = removeChild;
+
+function removeChild (child, parent) {
+  console.log("removeChild");
+  console.log(child, parent);
+}
+
+function addChild (child, parent) {
+  console.log("removeChild");
+  console.log(child, parent);
+}
 
 function addAttribute (element, attribute) {
   console.log("addAttribute");
@@ -34,21 +46,10 @@ function attachAttributeList(element, attrList) {
 
   for (var i=0; i<events.length; i++) {
     curried = events[i].value(element.props);
-    EVENTS[element.props.id] = fn;
     element.props[events[i].key] = curried;
   }
 
-
-  window.El = element;
   return null;
-}
-
-exports.appendChildToBody = function(node) {
-  return function() {
-    var body = document.getElementsByTagName("body");
-
-    body[0].appendChild(node);
-  }
 }
 
 exports.getDoc = function() {
@@ -69,7 +70,6 @@ exports.logMy = function(node) {
 
 exports.onClick = function(props) {
   return function() {
-    window.EVENTS[props.id](props);
   }
 }
 
@@ -131,5 +131,11 @@ exports.cleanupAttributes = function(element) {
       console.log(element);
       console.log(attrList);
     }
+  }
+}
+
+exports.updateStage = function(stage) {
+  return function() {
+    window.STAGE = stage;
   }
 }
