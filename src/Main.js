@@ -1,5 +1,3 @@
-window.STAGE = "RENDER";
-
 window.removeChild = removeChild;
 window.addChild = addChild;
 
@@ -67,8 +65,8 @@ function attachListener(element, screenName, eventType) {
   }
 }
 
-exports.getDoc = function() {
-  return document;
+exports.getRootNode = function() {
+  return {type: "linearLayout", props: {root: "true"}, children: []};
 }
 
 exports.done = function() {
@@ -78,7 +76,7 @@ exports.done = function() {
 
 exports.logMy = function(node) {
   return function() {
-    console.log("node");
+    console.log("current Node");
     console.log(node);
     window.__n = node;
   }
@@ -141,9 +139,9 @@ exports.patchAttributes = function(element) {
 exports.cleanupAttributes = function(element) {
   return function(attrList) {
     return function() {
-      console.log("cleanupAttributes");
-      console.log(element);
-      console.log(attrList);
+      // console.log("cleanupAttributes");
+      // console.log(element);
+      // console.log(attrList);
     }
   }
 }
@@ -151,12 +149,17 @@ exports.cleanupAttributes = function(element) {
 exports.attachSub = function(screenJSON) {
   return function(sub) {
     window.__screenSubs[screenJSON.tag] = sub;
-    console.log("attaching");
   }
 }
 
-exports.updateStage = function(stage) {
-  return function() {
-    window.STAGE = stage;
+exports.insertDom = function(root) {
+  return function(dom) {
+    return function() {
+      console.log("insertDom");
+      root.children.push(dom);
+      dom.parentNode = root;
+
+      console.log(root);
+    }
   }
 }

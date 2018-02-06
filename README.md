@@ -18,6 +18,8 @@
 
 :white_circle: Rendering `json` to `android ui` and modifying elements
 
+:white_circle: `Patching Vdom` -> Understanding `diffWithIxE` function for handling null nodes
+
 :white_circle: Custom Widgets
 
 ### Controller/Behaviors
