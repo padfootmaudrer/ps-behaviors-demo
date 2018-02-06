@@ -9,7 +9,7 @@
   "dependencies": {
     "purescript-prelude": "^3.1.1",
     "purescript-console": "^3.0.0",
-    "purescript-halogen-vdom": "https://github.com/juspay/purescript-halogen-vdom.git#^2.0.1",
+    "purescript-halogen-vdom": "https://github.com/juspay/purescript-halogen-vdom.git#ee0aa89",
     "purescript-foreign-generic": "^5.0.0",
     "purescript-behaviors": "^6.3.0"
   },

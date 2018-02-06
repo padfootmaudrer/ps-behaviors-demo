@@ -16,11 +16,10 @@ import FRP.Event (Event, subscribe)
 import Halogen.VDom (ElemName(..), ElemSpec(..), Machine, Step(..), VDom(..), VDomMachine, VDomSpec(..), buildVDom, extract)
 import Halogen.VDom.Machine (never, Machine(..), step, extract)
 
-data MEvent
-
-data AttrValue = AttrValue String | ScreenTag Foreign | Some MEvent
-
-newtype Attr = Attr (Array (Tuple String AttrValue))
+import UI.Core (MEvent, AttrValue(..), Attr(..), Prop)
+import UI.Elements
+import UI.Properties
+import UI.Events
 
 foreign import done :: forall eff. Eff eff Unit
 foreign import getRootNode :: forall eff. Eff eff Document
@@ -76,25 +75,62 @@ mySpec document =  VDomSpec {
     , document : document
     }
 
-ggChildNode1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" (AttrValue "5"))])) []
-gChildNode1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" (AttrValue "4"))])) [ggChildNode1]
+-- gChildNode1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" (AttrValue "3"))])) []
+-- gChildNode2 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" (AttrValue "5"))])) []
 
-childNode1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" (AttrValue "2"))])) [gChildNode1]
-childNode2 = Elem (ElemSpec (Nothing) (ElemName "relativeLayout") (Attr [(Tuple "id" (AttrValue "3"))])) []
+-- childNode1 = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [(Tuple "id" (AttrValue "2"))])) []
+-- childNode2 = Elem (ElemSpec (Nothing) (ElemName "relativeLayout") (Attr [(Tuple "id" (AttrValue "2"))])) [gChildNode1, gChildNode2]
+
+-- myDom1 :: forall a. Screen -> VDom Attr a
+-- myDom1 sc = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
+--                                                                  (Tuple "id" (AttrValue "1")),
+--                                                                  (Tuple "color" (AttrValue "red")),
+--                                                                  (Tuple "text" (AttrValue "hello")),
+--                                                                  (Tuple "domName" (ScreenTag (encode sc))),
+--                                                                  (Tuple "click" (Some onClick))
+--                                                                  ]) ) [childNode2]
 
 myDom1 :: forall a. Screen -> VDom Attr a
-myDom1 sc = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
-                                                                  (Tuple "id" (AttrValue "1"))
-                                                                  ]) ) []
+myDom1 sc = linearLayout
+              [ id_ "1"
+              , color "red"
+              , text "hello"
+              , domName (ScreenTag (encode sc))
+              , click (Some onClick)
+              ]
+              [ relativeLayout
+                  [ id_ "2" ]
+                  [ linearLayout
+                      [ id_ "3"]
+                      []
+                  , linearLayout
+                      [ id_ "5"]
+                      []
+                  ]
+              ]
+
+-- myDom2 :: forall a. Screen -> VDom Attr a
+-- myDom2 sc = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
+--                                                                   (Tuple "id" (AttrValue "1")),
+--                                                                   (Tuple "color" (AttrValue "blue")),
+--                                                                   (Tuple "bg" (AttrValue "green")),
+--                                                                   (Tuple "domName" (ScreenTag (encode sc)))
+--                                                                   ]) ) []
 myDom2 :: forall a. Screen -> VDom Attr a
-myDom2 sc = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
-                                                                   (Tuple "id" (AttrValue "1"))
-                                                                   ])) [childNode1]
+myDom2 sc =
+    linearLayout
+        [ id_ "1"
+        , color "blue"
+        , bg "green"
+        , domName (ScreenTag (encode sc))
+        ]
+        []
+
 
 myDom3 :: forall a. Screen -> VDom Attr a
 myDom3 sc = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
                                                                    (Tuple "id" (AttrValue "1"))
-                                                                   ])) [childNode2]
+                                                                   ])) []
 main = do
   root <- getRootNode
 
