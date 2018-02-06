@@ -12,11 +12,13 @@
 
 :ballot_box_with_check: `Patching Vdom` -> Add Nodes
 
-:white_circle: Testing Render and Patch functions
+:ballot_box_with_check: Testing Render and Patch functions
 
 :ballot_box_with_check: Converting Array format to Vdoms format 
 
 :white_circle: Add all elements, properties and events for array to VDom type conversion
+
+:white_circle: Integration strategy with exisiting sketch Code
 
 :white_circle: Rendering `json` to `android ui` and modifying elements
 
