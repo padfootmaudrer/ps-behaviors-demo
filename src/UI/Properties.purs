@@ -7,12 +7,18 @@ import Data.Tuple (Tuple(..))
 import UI.Core (AttrValue(..), Prop)
 
 
+prop :: String -> String -> Prop
+prop key value = Tuple key (AttrValue value)
+
 id_ :: String -> Prop
-id_ value = Tuple "id" (AttrValue value)
+id_ = prop "id"
 
 color :: String -> Prop
-color value = Tuple "color" (AttrValue value)
+color = prop "color"
 
 text :: String -> Prop
-text value = Tuple "text" (AttrValue value)
+text = prop "text"
+
+bg :: String -> Prop
+bg = prop "bg"
 
