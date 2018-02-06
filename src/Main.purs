@@ -93,18 +93,25 @@ mySpec document =  VDomSpec {
 myDom1 :: forall a. Screen -> VDom Attr a
 myDom1 sc = linearLayout
               [ id_ "1"
-              , color "red"
-              , text "hello"
+              , height "match_parent"
+              , width "match_parent"
+              , background "#123123"
               , domName (ScreenTag (encode sc))
-              , click (Some onClick)
               ]
               [ relativeLayout
-                  [ id_ "2" ]
+                  [ id_ "2"
+                  , margin "100,100,100,100"
+                  , height "match_parent"
+                  , width "match_parent"
+                  , background "#987654"   
+                  ]
                   [ linearLayout
-                      [ id_ "3"]
-                      []
-                  , linearLayout
-                      [ id_ "5"]
+                      [ id_ "3"
+                      , margin "50,50,0,0"
+                      , height "200"
+                      , width "200"
+                      , background "#ff11ff"
+                      ]
                       []
                   ]
               ]
@@ -120,17 +127,14 @@ myDom2 :: forall a. Screen -> VDom Attr a
 myDom2 sc =
     linearLayout
         [ id_ "1"
-        , color "blue"
-        , bg "green"
+        , height "match_parent"
+        , width "match_parent"
+        , background "#657348"
         , domName (ScreenTag (encode sc))
         ]
         []
 
 
-myDom3 :: forall a. Screen -> VDom Attr a
-myDom3 sc = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
-                                                                   (Tuple "id" (AttrValue "1"))
-                                                                   ])) []
 main = do
   root <- getRootNode
 
@@ -141,8 +145,7 @@ main = do
   insertDom root (extract machine1)
 
   machine2 <- step machine1 (myDom2 (SecondScreen 0))
-  machine3 <- step machine2 (myDom3 (SecondScreen 0))
 
-  logMy (extract machine3)
+  logMy (extract machine2)
 
   pure unit
