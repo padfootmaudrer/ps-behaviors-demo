@@ -16,12 +16,10 @@ import FRP.Event (Event, subscribe)
 import Halogen.VDom (ElemName(..), ElemSpec(..), Machine, Step(..), VDom(..), VDomMachine, VDomSpec(..), buildVDom, extract)
 import Halogen.VDom.Machine (never, Machine(..), step, extract)
 
-data MEvent
-
-{-- data AttrTypes = String | Foreign --}
-data AttrValue = AttrValue String | ScreenTag Foreign | Some MEvent
-
-newtype Attr = Attr (Array (Tuple String AttrValue))
+import UI.Core (MEvent, AttrValue(..), Attr(..), Prop)
+import UI.Elements
+import UI.Properties
+import UI.Events
 
 foreign import done :: forall eff. Eff eff Unit
 foreign import getDoc :: forall eff. Eff eff Document
@@ -91,6 +89,25 @@ myDom1 sc = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
                                                                   (Tuple "domName" (ScreenTag (encode sc))),
                                                                   (Tuple "click" (Some onClick))
                                                                   ]) ) [childNode2]
+
+myDom :: forall a. Screen -> VDom Attr a
+myDom sc = linearLayout
+              [ id_ "1"
+              , color "red"
+              , text "hello"
+              , domName (ScreenTag (encode sc))
+              , click (Some onClick)
+              ]
+              [ relativeLayout
+                  [ id_ "2" ]
+                  [ linearLayout
+                      [ id_ "3"]
+                      []
+                  , linearLayout
+                      [ id_ "5"]
+                      []
+                  ]
+              ]
 
 myDom2 :: forall a. Screen -> VDom Attr a
 myDom2 sc = Elem (ElemSpec (Nothing) (ElemName "linearLayout") (Attr [
