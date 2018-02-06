@@ -14,7 +14,9 @@
 
 :white_circle: Testing Render and Patch functions
 
-:white_circle: Converting Array format to Vdoms format 
+:ballot_box_with_check: Converting Array format to Vdoms format 
+
+:white_circle: Add all elements, properties and events for array to VDom type conversion
 
 :white_circle: Rendering `json` to `android ui` and modifying elements
 
