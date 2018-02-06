@@ -117,7 +117,7 @@ myDom1 sc = linearLayout
 --                                                                   (Tuple "domName" (ScreenTag (encode sc)))
 --                                                                   ]) ) []
 myDom2 :: forall a. Screen -> VDom Attr a
-myDom2 sc = 
+myDom2 sc =
     linearLayout
         [ id_ "1"
         , color "blue"
