@@ -18,7 +18,7 @@
 
 :ballot_box_with_check: Rendering `json` to `android ui` and modifying elements
 
-:white_cricle: Support state based dom
+:white_circle: Support state based dom
 
 :white_circle: Id Generation/Handling
 
