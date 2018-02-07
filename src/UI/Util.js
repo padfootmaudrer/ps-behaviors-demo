@@ -1,37 +1,28 @@
+window.SUBS = {};
+
 function attachAttributeList(element, attrList) {
   var key, value;
-  var curried;
-  var events = [];
-  var fn = function(props) {console.log(props)};
 
-  var domNameIndex = -1;
   for (var i = 0; i < attrList.length; i++) {
     key = attrList[i].value0;
     value = attrList[i].value1.value0;
 
-    if (key === "domName") {
-      domNameIndex = i;
-    }
-
     if (typeof value == "function") {
-      // var screenName = attrList[domNameIndex].value1.value0.tag;
-      // attachListener(element, screenName, key);
-      events.push({key: key, value: value});
+      attachListener(element, key);
     } else {
       element.props[key] = value;
     }
-  }
-  for (var i=0; i<events.length; i++) {
-    curried = events[i].value(element.props);
-    element.props[events[i].key] = curried;
   }
 
   return null;
 }
 
-function attachListener(element, screenName, eventType) {
-  element[eventType] = function(){
-    window.__screenSubs[screenName](element.props);
+function attachListener(element, eventType) {
+  window.SUBS[element.props.id] = {};
+  window.SUBS[element.props.id]["eventType"] = eventType;
+
+  element[eventType] = function(value){
+    window.SUBS[element.props.id]["fn"](value, element.props);
   }
 }
 
@@ -89,7 +80,6 @@ exports.patchAttributes = function(element) {
 exports.cleanupAttributes = function(element) {
   return function(attrList) {
     return function() {
-      // console.log("cleanupAttributes");
       // console.log(element);
       // console.log(attrList);
     }
@@ -103,6 +93,7 @@ exports.done = function() {
 
 exports.logNode = function(node) {
   return function() {
+    window.N = node;
     console.log(node);
   }
 }
@@ -125,43 +116,31 @@ exports.getRootNode = function() {
 exports.insertDom = function(root) {
   return function(dom) {
     return function() {
-      console.log("insertDom");
       root.children.push(dom);
       dom.parentNode = root;
-
-      console.log(root);
     }
   }
 }
 
-exports.attachEvents = function(id) {
+exports.attachSignalEvents = function(id) {
   return function(sub) {
-    var elem = document.getElementsByTagName("body")[0];
-
-    var cb = function() {
-      sub(true)();
+    window.SUBS[id].fn = function(value, props) {
+      sub(value)();
     }
 
-    elem.addEventListener("click", cb);
+    return null;
   }
 }
 
 
 exports.initializeState = function() {
-  if (!window.APP_STATE) {
-    window.APP_STATE = {};
-  }
-
+  window.APP_STATE = {};
   return null;
 }
 
 exports.updateState = function(key) {
   return function(value) {
     return function() {
-      if (!window.APP_STATE) {
-        window.APP_STATE = {};
-      }
-
       window.APP_STATE[key] = value;
 
       return window.APP_STATE;
@@ -170,9 +149,5 @@ exports.updateState = function(key) {
 }
 
 exports.getState = function() {
-  if (!window.APP_STATE) {
-    window.APP_STATE = {};
-  }
-
   return window.APP_STATE;
 }

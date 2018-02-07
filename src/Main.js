@@ -32,6 +32,5 @@ function updateAttribute (element, attribute) {
   console.log(element, attribute);
 }
 
-exports.onClick = function() {
-}
+exports.onClick = function() {}
 

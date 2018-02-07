@@ -18,7 +18,13 @@
 
 :ballot_box_with_check: Rendering `json` to `android ui` and modifying elements
 
-:white_circle: Support state based dom
+:ballot_box_with_check: Support state based dom
+
+:ballot_box_with_check: `Patching Vdom` -> Understanding `diffWithIxE` function for handling null nodes
+
+:ballot_box_with_check: Custom Widgets
+
+:white_circle: Auto-Screen name 
 
 :white_circle: Id Generation/Handling
 
@@ -28,9 +34,7 @@
 
 :white_circle: Add all elements, properties and events for array to VDom type conversion
 
-:white_circle: `Patching Vdom` -> Understanding `diffWithIxE` function for handling null nodes
-
-:white_circle: Custom Widgets
+:white_circle: Child component rendering and behaviours
 
 ### Controller/Behaviors
 

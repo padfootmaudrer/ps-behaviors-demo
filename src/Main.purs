@@ -17,10 +17,10 @@ foreign import onClick :: MEvent
 widget state = linearLayout
               [ id_ "1"
               , color (state.color)
-              , text "hello"
-              , click (Some onClick)
               ]
                 [
+                  linearLayout [id_ "2" , click (Some onClick)] [],
+                  linearLayout [id_ "3" , click (Some onClick)] []
                 ]
 
 main = do
@@ -35,12 +35,20 @@ main = do
 
   pure unit
 
-eval x = U.updateState "color" "red"
+eval x y = do
+     let s = x && y
+
+     if s
+        then
+         U.updateState "color" "green"
+       else
+         U.updateState "color" "red"
 
 listen = do
-  sig1 <- U.signal "1"
+  sig1 <- U.signal "2"
+  sig2 <- U.signal "3"
 
-  let behavior = eval <$> sig1.behavior
-  let events = (sig1.event)
+  let behavior = eval <$> sig1.behavior <*> sig2.behavior
+  let events = (sig1.event <|> sig2.event)
 
   U.patch widget behavior events
