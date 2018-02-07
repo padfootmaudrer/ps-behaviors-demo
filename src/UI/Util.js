@@ -21,7 +21,7 @@ function attachListener(element, eventType) {
   window.SUBS[element.props.id] = {};
   window.SUBS[element.props.id]["eventType"] = eventType;
 
-  element[eventType] = function(value){
+  element.props[eventType] = function(value){
     window.SUBS[element.props.id]["fn"](value, element.props);
   }
 }
@@ -30,7 +30,7 @@ exports.applyAttributes = function(element) {
   return function(attrList) {
     return function() {
       attachAttributeList(element, attrList);
-      return null;
+      return attrList;
     }
   }
 }
@@ -39,6 +39,7 @@ exports.patchAttributes = function(element) {
   return function(oldAttrList) {
     return function(newAttrList) {
       return function() {
+        console.log(oldAttrList, newAttrList);
 
         var attrFound = 0;
 
@@ -49,12 +50,14 @@ exports.patchAttributes = function(element) {
               attrFound = 1;
 
               if (oldAttrList[i].value1.value0 !== newAttrList[j].value1.value0) {
+                oldAttrList[i].value1.value0 = newAttrList[j].value1.value0;
                 updateAttribute(element, newAttrList[j]);
               }
             }
           }
 
           if (!attrFound) {
+            oldAttrList[i].splice(i, 0);
             removeAttribute(element, oldAttrList[i]);
           }
         }
@@ -69,9 +72,12 @@ exports.patchAttributes = function(element) {
           }
 
           if (!attrFound) {
+            oldAttrList.push(newAttrList[i]);
             addAttribute(element, newAttrList[i]);
           }
         }
+
+        return oldAttrList;
       }
     }
   }
@@ -118,6 +124,8 @@ exports.insertDom = function(root) {
     return function() {
       root.children.push(dom);
       dom.parentNode = root;
+
+      window.N = root;
     }
   }
 }
