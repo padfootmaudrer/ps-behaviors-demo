@@ -56,7 +56,7 @@ mySpec document =  VDomSpec {
     , document : document
     }
 
-patch x myDom = do
+patchAndRun x myDom = do
   state <- x
   logNode "patching"
   machine <- getLatestMachine
@@ -64,7 +64,7 @@ patch x myDom = do
   storeMachine newMachine
 
 
-initWidget dom listen= do
+render dom listen= do
   root <- getRootNode
   machine <- buildVDom (mySpec root) dom
   storeMachine machine
@@ -78,6 +78,5 @@ signal id = do
   let x = attachEvents id o.push
   pure $ {behavior : behavior , event : o.event}
 
-
-diffWidget dom behavior events = do
-  B.sample_ behavior events `E.subscribe` (\x -> patch x dom)
+patch dom behavior events = do
+  B.sample_ behavior events `E.subscribe` (\x -> patchAndRun x dom)
