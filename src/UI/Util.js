@@ -14,8 +14,8 @@ function attachAttributeList(element, attrList) {
     }
 
     if (typeof value == "function") {
-      var screenName = attrList[domNameIndex].value1.value0.tag;
-      attachListener(element, screenName, key);
+      // var screenName = attrList[domNameIndex].value1.value0.tag;
+      // attachListener(element, screenName, key);
       events.push({key: key, value: value});
     } else {
       element.props[key] = value;
@@ -99,4 +99,80 @@ exports.cleanupAttributes = function(element) {
 exports.done = function() {
   console.log("done");
   return;
+}
+
+exports.logNode = function(node) {
+  return function() {
+    console.log(node);
+  }
+}
+
+exports.storeMachine = function(machine) {
+  return function() {
+    window.MACHINE = machine;
+  }
+}
+
+exports.getLatestMachine = function() {
+  return window.MACHINE;
+}
+
+exports.getRootNode = function() {
+  return {type: "linearLayout", props: {root: "true"}, children: []};
+}
+
+
+exports.insertDom = function(root) {
+  return function(dom) {
+    return function() {
+      console.log("insertDom");
+      root.children.push(dom);
+      dom.parentNode = root;
+
+      console.log(root);
+    }
+  }
+}
+
+exports.attachEvents = function(id) {
+  return function(sub) {
+    var elem = document.getElementsByTagName("body")[0];
+
+    var cb = function() {
+      sub(true)();
+    }
+
+    elem.addEventListener("click", cb);
+  }
+}
+
+
+exports.initializeState = function() {
+  if (!window.APP_STATE) {
+    window.APP_STATE = {};
+  }
+
+  return null;
+}
+
+exports.updateState = function(key) {
+  return function(value) {
+    return function() {
+      if (!window.APP_STATE) {
+        window.APP_STATE = {};
+      }
+
+      window.APP_STATE[key] = value;
+
+      return window.APP_STATE;
+    }
+  }
+}
+
+exports.getState = function() {
+  if (!window.APP_STATE) {
+    window.APP_STATE = {};
+  }
+
+  return window.APP_STATE;
 }

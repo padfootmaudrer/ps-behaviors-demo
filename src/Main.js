@@ -32,23 +32,6 @@ function updateAttribute (element, attribute) {
   console.log(element, attribute);
 }
 
-
-exports.getRootNode = function() {
-  return {type: "linearLayout", props: {root: "true"}, children: []};
-}
-
-
 exports.onClick = function() {
 }
 
-exports.insertDom = function(root) {
-  return function(dom) {
-    return function() {
-      console.log("insertDom");
-      root.children.push(dom);
-      dom.parentNode = root;
-
-      console.log(root);
-    }
-  }
-}

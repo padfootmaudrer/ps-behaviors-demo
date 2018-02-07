@@ -1,4 +1,4 @@
-module Type where
+module Types where
 
 import Prelude
 
@@ -11,6 +11,8 @@ import FRP.Event (Event, subscribe)
 
 data Screen = FirstScreen Int | SecondScreen Int
 
+type Rec t = {| t }
+
 derive instance genericFirstScreen :: Generic Screen _
 instance encodeFirstScreen :: Encode Screen where
   encode = genericEncode (defaultOptions {unwrapSingleConstructors = false})
@@ -19,4 +21,3 @@ instance decodeFirstScreen :: Decode Screen where
 
 instance showScreen :: Show Screen where
   show = genericShow
-
