@@ -44,4 +44,4 @@ listen = do
   let behavior = eval <$> sig1.behavior
   let events = (sig1.event)
 
-  U.diffWidget eval widget behavior events
+  U.diffWidget widget behavior events

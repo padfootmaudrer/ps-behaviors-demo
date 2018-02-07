@@ -79,5 +79,5 @@ signal id = do
   pure $ {behavior : behavior , event : o.event}
 
 
-diffWidget eval dom behavior events = do
+diffWidget dom behavior events = do
   B.sample_ behavior events `E.subscribe` (\x -> patch x dom)
