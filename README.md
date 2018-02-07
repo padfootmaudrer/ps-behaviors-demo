@@ -16,11 +16,17 @@
 
 :ballot_box_with_check: Converting Array format to Vdoms format 
 
-:white_circle: Add all elements, properties and events for array to VDom type conversion
+:ballot_box_with_check: Rendering `json` to `android ui` and modifying elements
+
+:white_cricle: Support state based dom
+
+:white_circle: Id Generation/Handling
 
 :white_circle: Integration strategy with exisiting sketch Code
 
-:white_circle: Rendering `json` to `android ui` and modifying elements
+:white_circle: Dummy app for trying out vdom+behaviour
+
+:white_circle: Add all elements, properties and events for array to VDom type conversion
 
 :white_circle: `Patching Vdom` -> Understanding `diffWithIxE` function for handling null nodes
 
