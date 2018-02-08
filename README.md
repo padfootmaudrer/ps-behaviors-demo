@@ -30,7 +30,7 @@
 
 :white_circle: Integration strategy with exisiting sketch Code
 
-:white_circle: Dummy app for trying out vdom+behaviour
+:ballot_box_with_check: Dummy app for trying out vdom+behaviour
 
 :white_circle: Add all elements, properties and events for array to VDom type conversion
 
