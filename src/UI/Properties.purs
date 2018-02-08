@@ -35,4 +35,4 @@ bg :: String -> Prop
 bg = prop "bg"
 
 gravity :: String -> Prop
-gravity = prop "bg"
+gravity = prop "gravity"

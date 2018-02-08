@@ -59,13 +59,16 @@ exports.click = function() {}
 function insertDom(root) {
   return function(dom) {
     return function() {
-      console.log(Android);
-      Android.Render(domAll(dom));
+      root.props.height = "match_parent";
+      root.props.width = "match_parent";
+      root.props.id = "GodFather";
+      root.type = "relativeLayout";
 
       root.children.push(dom);
       dom.parentNode = root;
-
       window.N = root;
+
+      Android.Render(domAll(root));
     }
   }
 }
