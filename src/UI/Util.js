@@ -119,16 +119,7 @@ exports.getRootNode = function() {
 }
 
 
-exports.insertDom = function(root) {
-  return function(dom) {
-    return function() {
-      root.children.push(dom);
-      dom.parentNode = root;
-
-      window.N = root;
-    }
-  }
-}
+exports.insertDom = window.insertDom;
 
 exports.attachSignalEvents = function(id) {
   return function(sub) {
