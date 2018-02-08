@@ -39,8 +39,6 @@ exports.patchAttributes = function(element) {
   return function(oldAttrList) {
     return function(newAttrList) {
       return function() {
-        console.log(oldAttrList, newAttrList);
-
         var attrFound = 0;
 
         for (var i=0; i<oldAttrList.length; i++) {

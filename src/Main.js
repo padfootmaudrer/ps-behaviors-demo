@@ -13,7 +13,6 @@ function applyProp(element, attribute) {
   var prop = {
     id: element.props.id
   }
-  debugger;
   prop[attribute.value0] = attribute.value1.value0;
   Android.runInUI(parseParams("linearLayout", prop, "set"));
 }
@@ -55,7 +54,7 @@ function updateAttribute (element, attribute) {
   applyProp(element, attribute);
 }
 
-exports.onClick = function() {}
+exports.click = function() {}
 
 function insertDom(root) {
   return function(dom) {
