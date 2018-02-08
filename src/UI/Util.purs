@@ -74,9 +74,9 @@ render dom listen = do
   _ <- listen
   pure unit
 
-signal id = do
+signal id initialValue = do
   o <- E.create
-  let behavior = B.step false o.event
+  let behavior = B.step initialValue o.event
   let x = attachSignalEvents id o.push
   pure $ {behavior : behavior , event : o.event}
 

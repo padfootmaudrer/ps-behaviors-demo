@@ -45,8 +45,8 @@ eval x y = do
          U.updateState "color" "red"
 
 listen = do
-  sig1 <- U.signal "2"
-  sig2 <- U.signal "3"
+  sig1 <- U.signal "2" false
+  sig2 <- U.signal "3" false
 
   let behavior = eval <$> sig1.behavior <*> sig2.behavior
   let events = (sig1.event <|> sig2.event)
