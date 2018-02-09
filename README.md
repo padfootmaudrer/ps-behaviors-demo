@@ -24,17 +24,17 @@
 
 :ballot_box_with_check: Custom Widgets
 
+:ballot_box_with_check: Dummy app for trying out vdom+behaviour
+
+:white_circle: Out of order child rendering and 
+
+:white_circle: Child component rendering and behaviours
+
 :white_circle: Auto-Screen name 
 
 :white_circle: Id Generation/Handling
 
 :white_circle: Integration strategy with exisiting sketch Code
-
-:ballot_box_with_check: Dummy app for trying out vdom+behaviour
-
-:white_circle: Add all elements, properties and events for array to VDom type conversion
-
-:white_circle: Child component rendering and behaviours
 
 ### Controller/Behaviors
 
@@ -46,6 +46,3 @@
 
 ### Performance check/improvements
 
-## Known issues
-** Edittext padding not working
-** Border Shadow not working
