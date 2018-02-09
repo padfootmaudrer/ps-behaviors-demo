@@ -45,3 +45,7 @@
 ### Event Delegation (remove eventHandlers on child removal)
 
 ### Performance check/improvements
+
+## Known issues
+** Edittext padding not working
+** Border Shadow not working
