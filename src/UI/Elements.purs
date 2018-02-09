@@ -2,13 +2,23 @@ module UI.Elements
 	( Node
 	, Leaf
     , element
+	, keyed
     , linearLayout
     , relativeLayout
+    , horizontalScrollView
+    , scrollView
+    , imageView
+    , editText
+    , listView
+    , progressBar
+    , textView
+    , viewPager
 	) where
 
-import Prelude
 
 import Data.Maybe (Maybe(..))
+
+import Data.Tuple (Tuple)
 
 import Halogen.VDom (ElemName(..), ElemSpec(..), VDom(..))
 
@@ -23,9 +33,12 @@ type Leaf p i
    = Array Prop
   -> VDom p i
 
-
+-- Keyed (ElemSpec a) (Array (Tuple String (VDom a w)))
 element :: forall i. ElemName -> Array Prop -> Array (VDom Attr i) -> VDom Attr i
-element elemName props children = Elem (ElemSpec Nothing elemName (Attr props)) children
+element elemName props = Elem (ElemSpec Nothing elemName (Attr props))
+
+keyed :: forall i. ElemName -> Array Prop -> Array (Tuple String (VDom Attr i)) -> VDom Attr i
+keyed elemName props children = Keyed (ElemSpec Nothing elemName (Attr props)) children
 
 node :: forall i. String -> Node Attr i
 node elem = element (ElemName elem)
