@@ -10,15 +10,23 @@ import UI.Properties
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log, logShow)
 import Control.Plus ((<|>))
+import Data.Array (head, toUnfoldable)
+import Data.Int (fromString)
 import Data.List (List)
+import Data.Maybe (Maybe(..))
+import Data.Set (Set)
+import Data.Unfoldable (class Unfoldable)
+import FRP.Behavior (step)
+import FRP.Behavior.Keyboard (key, keys)
+import FRP.Behavior.Mouse (buttons)
 import FRP.Event (Event)
+import FRP.Event.Keyboard (up)
+import FRP.Event.Mouse (down)
 import FRP.Event.Time (interval)
 import UI.Core (MEvent, AttrValue(..), Attr(..), Prop)
 import UI.Util as U
 
 foreign import click :: MEvent
-
-data EventsType = BoolEvent Boolean |  IntEvent Int | StringEvent String
 
 widget state = linearLayout
               [ id_ "1"
@@ -29,29 +37,12 @@ widget state = linearLayout
               ]
               [ linearLayout
                   [ id_ "2"
-                  , height "300"
-                  , width "300"
-                  , background "#987654"
+                  , height (state.height)
+                  , width (state.width)
+                  , background "#FF00FF"
                   ]
-
-                  [ linearLayout
-                      [ id_ "3"
-                      , width "150"
-                      , height "match_parent"
-                      , background "#121231"
-                      , onClick (Some click)
-                      ]
-                      [],
-                    linearLayout
-                      [ id_ "4"
-                      , height "match_parent"
-                      , width "150"
-                      , background "#000000"
-                      , onClick (Some click)
-                      ]
-                      []
-                  ]
-                  ]
+                  []
+                ]
 
 
 
@@ -61,31 +52,45 @@ main = do
 
   --- Update State ----
   state <- U.updateState "color" "yellow"
+  state <- U.updateState "height" "300"
+  state <- U.updateState "width" "300"
 
   ---- Render Widget ---
   U.render (widget state) listen
 
   pure unit
 
-eval (BoolEvent x) (BoolEvent y) = do
-  let s = x && y
-  logShow x
-  logShow y
-  if s
-    then
-     U.updateState "color" "green"
-    else
-     U.updateState "color" "red"
 
+eval z = do
+  state <- U.getState
+  if (z)
+    then do
+      height <- pure $ getDecreasedHeight state.height
+      width <- pure $ getDecreasedWidth state.width
+      state <- U.updateState "height" height
+      U.updateState "width" width
+    else do
+      height <- pure $ getIncreasedHeight state.height
+      width <- pure $ getIncreasedWidth state.width
+      state <- U.updateState "height" height
+      U.updateState "width" width
 
-eval _ _ = U.updateState "x" "y"
+  where
+    getDecreasedHeight height = case (fromString height) of
+      Just h -> show (h-2)
+      Nothing -> height
+    getIncreasedHeight height = case (fromString height) of
+      Just h -> show (h+5)
+      Nothing -> height
+    getIncreasedWidth width = case (fromString width) of
+      Just h -> show (h+5)
+      Nothing -> width
+    getDecreasedWidth width = case (fromString width) of
+      Just h -> show (h-2)
+      Nothing -> width
 
 listen = do
-  sig1 <- U.signal "3" (BoolEvent true)
-  sig2 <- U.signal "4" (BoolEvent true)
+  let behavior = eval <$> (key 32)  -- <*> (step 10 down)
+  let events = ((void down) <|> (void (interval 50)))
 
-  let behavior = eval <$> sig1.behavior <*> sig2.behavior
-  let events = (sig1.event <|> sig2.event  <|> ( map (\x -> IntEvent x) (interval 1000)))
-
-  pure unit
   U.patch widget behavior events
