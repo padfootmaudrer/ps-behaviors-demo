@@ -9,5 +9,5 @@ import UI.Core (AttrValue(..), Prop)
 domName :: AttrValue -> Prop
 domName st = Tuple "domName" st
 
-click :: AttrValue -> Prop
-click some = Tuple "click" some
+onClick :: AttrValue -> Prop
+onClick some = Tuple "onClick" some
