@@ -36,3 +36,12 @@ bg = prop "bg"
 
 gravity :: String -> Prop
 gravity = prop "gravity"
+
+a_translationX :: String -> Prop
+a_translationX = prop "a_translationX"
+
+a_duration :: String -> Prop
+a_duration = prop "a_duration"
+
+alignParentBottom :: String -> Prop
+alignParentBottom = prop "alignParentBottom"

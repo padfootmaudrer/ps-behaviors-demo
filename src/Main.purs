@@ -20,30 +20,40 @@ import FRP.Behavior (step)
 import FRP.Behavior.Keyboard (key, keys)
 import FRP.Behavior.Mouse (buttons)
 import FRP.Event (Event)
-import FRP.Event.Keyboard (up)
-import FRP.Event.Mouse (down)
-import FRP.Event.Time (interval)
+import FRP.Event.Keyboard (up, down)
+import FRP.Event.Time (animationFrame, interval)
 import UI.Core (MEvent, AttrValue(..), Attr(..), Prop)
 import UI.Util as U
 
 foreign import click :: MEvent
 
-widget state = linearLayout
+widget state = relativeLayout
               [ id_ "1"
               , height "match_parent"
               , width "match_parent"
               , background (state.color)
-              , gravity "center"
+              -- , gravity "center"
               ]
-              [ linearLayout
+              [
+                linearLayout
                   [ id_ "2"
                   , height (state.height)
                   , width (state.width)
                   , background "#FF00FF"
+                  , alignParentBottom "true,-1"
+                  , margin (state.leftMargin <> "," <> "0" <> "," <> state.rightMargin <> "," <> "0")
                   ]
-                  []
-                ]
-
+                  [],
+                linearLayout
+                    [ id_ "3"
+                    , height "60"
+                    , width "30"
+                    , background "#FF00FF"
+                    , alignParentBottom "true,-1"
+                    , margin (state.leftMargin3 <> "," <> state.topMargin <> "," <> state.rightMargin <> "," <> state.bottomMargin)
+                    ]
+                    []
+              ]
 
 
 main = do
@@ -52,8 +62,15 @@ main = do
 
   --- Update State ----
   state <- U.updateState "color" "yellow"
-  state <- U.updateState "height" "300"
-  state <- U.updateState "width" "300"
+  state <- U.updateState "height" "30"
+  state <- U.updateState "width" "30"
+  state <- U.updateState "leftMargin" "180"
+  state <- U.updateState "topMargin" "0"
+  state <- U.updateState "rightMargin" "0"
+  state <- U.updateState "bottomMargin" "0"
+  state <- U.updateState "leftMargin3" "375"
+  state <- U.updateState "leftMargin4" "485"
+  state <- U.updateState "leftMargin5" "575"
 
   ---- Render Widget ---
   U.render (widget state) listen
@@ -61,36 +78,63 @@ main = do
   pure unit
 
 
-eval z = do
+eval z x = do
+  logShow x
   state <- U.getState
-  if (z)
-    then do
-      height <- pure $ getDecreasedHeight state.height
-      width <- pure $ getDecreasedWidth state.width
-      state <- U.updateState "height" height
-      U.updateState "width" width
-    else do
-      height <- pure $ getIncreasedHeight state.height
-      width <- pure $ getIncreasedWidth state.width
-      state <- U.updateState "height" height
-      U.updateState "width" width
+  case x of
+    37 -> do
+      -- leftMargin <- pure $ getMarginWidthDec state.leftMargin
+      state <- U.updateState "leftMargin" state.leftMargin
+      state <- U.updateState "topMargin" state.topMargin
+      state <- U.updateState "rightMargin" state.rightMargin
+      U.updateState "bottomMargin" state.bottomMargin
+    38 -> do
+      bottomMargin <- pure $ getMarginHeightInc state.bottomMargin
+      -- state <- U.updateState "leftMargin" state.leftMargin
+      state <- U.updateState "topMargin" state.topMargin
+      state <- U.updateState "rightMargin" state.rightMargin
+      U.updateState "bottomMargin" bottomMargin
+    39 -> do
+      leftMargin <- pure $ getMarginWidthInc state.leftMargin
+      state <- U.updateState "leftMargin" leftMargin
+      state <- U.updateState "topMargin" state.topMargin
+      state <- U.updateState "rightMargin" state.rightMargin
+      U.updateState "bottomMargin" state.bottomMargin
+    40 -> do
+      -- bottomMargin <- pure $ getMarginHeightDec state.bottomMargin
+      state <- U.updateState "leftMargin" state.leftMargin
+      state <- U.updateState "topMargin" state.topMargin
+      state <- U.updateState "rightMargin" state.rightMargin
+      U.updateState "bottomMargin" state.bottomMargin
+      -- U.updateState "bottomMargin" bottomMargin
+    _ -> U.updateState "bottomMargin" state.bottomMargin
+
 
   where
-    getDecreasedHeight height = case (fromString height) of
-      Just h -> show (h-2)
-      Nothing -> height
-    getIncreasedHeight height = case (fromString height) of
-      Just h -> show (h+5)
-      Nothing -> height
-    getIncreasedWidth width = case (fromString width) of
-      Just h -> show (h+5)
-      Nothing -> width
-    getDecreasedWidth width = case (fromString width) of
-      Just h -> show (h-2)
-      Nothing -> width
+    getMarginWidthInc margin = case (fromString margin) of
+      Just m -> case (m >= 0 && m <= 1280) of
+        true -> show (m+5)
+        false -> show (0)
+      Nothing -> margin
+    getMarginHeightInc margin = case (fromString margin) of
+      Just m -> case (m >= 0 && m <= 700) of
+        true -> show (m+5)
+        false -> show (0)
+      Nothing -> margin
+    -- getMarginHeightDec margin = case (fromString margin) of
+    --   Just m -> case (m >= 0 && m <= 700) of
+    --     true -> show (m-5)
+    --     false -> show (0)
+    --   Nothing -> margin
+    -- getMarginWidthDec margin = case (fromString margin) of
+    --   Just m -> case (m >= 0 && m <= 1280) of
+    --     true -> show (m-5)
+    --     false -> show (0)
+    --   Nothing -> margin
+
 
 listen = do
-  let behavior = eval <$> (key 32)  -- <*> (step 10 down)
-  let events = ((void down) <|> (void (interval 50)))
+  let behavior = eval <$> (key 32) <*> (step 10 down)
+  let events = ((void down) <|> (animationFrame)) --  (void (interval 50)))
 
   U.patch widget behavior events
